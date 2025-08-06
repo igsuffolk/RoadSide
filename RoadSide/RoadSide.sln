@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36203.30
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoadSide", "RoadSide.csproj", "{EFE85AFC-EBC1-4067-93FB-157905FC923C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedProject1", "..\SharedProject1\SharedProject1.shproj", "{F1394BB6-60EA-4E74-8191-ABB0500A1A75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "..\Api\Api.csproj", "{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFE85AFC-EBC1-4067-93FB-157905FC923C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE85AFC-EBC1-4067-93FB-157905FC923C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE85AFC-EBC1-4067-93FB-157905FC923C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE85AFC-EBC1-4067-93FB-157905FC923C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1AE6C912-264C-4044-8660-019C306E6707}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SharedProject1\SharedProject1.projitems*{a2d16998-c8fc-47f0-9b5e-f5c9daef593e}*SharedItemsImports = 5
+		..\SharedProject1\SharedProject1.projitems*{efe85afc-ebc1-4067-93fb-157905fc923c}*SharedItemsImports = 5
+		..\SharedProject1\SharedProject1.projitems*{f1394bb6-60ea-4e74-8191-abb0500a1a75}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal

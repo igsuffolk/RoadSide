@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\ReportsList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazorBootstrapToasts" Version="1.0.3" />
+    <PackageReference Include="IndexedDB.Blazor" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.18" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.13.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <Import Project="..\SharedProject1\SharedProject1.projitems" Label="Shared" />
+
+</Project>

@@ -1,0 +1,75 @@
+﻿@page "/"
+@layout HomeLayout
+@using RoadSide.Helpers
+@using Microsoft.AspNetCore.Http
+@using SharedProject1.Models.DTO
+@using RoadSide.Services
+@using RoadSide.Models
+@using BlazorBootstrapToasts
+
+@inject NavigationManager _navigationManager
+@inject IHttpService _httpService
+@inject UserService _userService
+
+<PageTitle>Sign In</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm mt-5">
+        <div class="card-body">
+            <div class="card-title">
+                <h2>Sign In</h2>
+            </div>
+            <Toast @ref="Toast"></Toast>
+             <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="Model.Email" />
+
+            <label class="form-label">Password</label>
+            <InputText type="password" class="form-control" @bind-Value="Model.Password" />
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-box-arrow-right"></i>&nbsp;Sign In</button>
+            </div>
+            </EditForm>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    public LoginDTO Model = new();
+    public Toast Toast { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            User? user = await _userService.FetchUserFromBrowser();
+            if (user.isAuthenticated)
+            {
+                _navigationManager.NavigateTo("Report");
+            }
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrEmpty(Model.Email))
+        {
+            await Toast.Show("danger", "Please enter an Email", 3000);
+            return;
+        }
+
+        string result = await _httpService.PostAsyncString<LoginDTO>("home/login", Model);
+        if (string.IsNullOrEmpty(result))
+        {
+            await Toast.Show("danger", "Invalid Credentials", 3000);
+            return;
+        }
+
+       await _userService.AuthenticateUserAsync(result);
+
+
+        _navigationManager.NavigateTo("Report");
+    }
+
+}

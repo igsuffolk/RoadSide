@@ -1,0 +1,125 @@
+﻿@page "/ReportsList"
+
+@using SharedProject1.Models
+@using IndexedDB.Blazor;
+@using RoadSide.Database;
+@using RoadSide.Services
+
+@inject IHttpService _httpService
+@inject IIndexedDbFactory _dbFactory
+@inject NavigationManager _navigationManager
+@inject IStorageService _storageService
+
+<PageTitle>Reports</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @{
+                if (isLoading)
+                {
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+                else
+                {
+                    if (ListReports.Count > 0)
+                    {
+                        foreach (RoadReport report in ListReports)
+                        {
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <h5>@report.ReportDate.ToString("dd/MMM/yyyy") - @report.RoadName</h5>
+                                    </div>
+                                    <div class="card-text" style="line-height:1;">
+                                        @report.Description
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <h3>All reports have been sent</h3>
+                    }
+                }
+            }
+
+        </div>
+      
+    </div>
+</div>
+
+<footer class="footer text-muted">
+    <div class="container-fluid">
+        <div class="row footer fixed-bottom p-2">
+            <div class="col-6">
+                <button @onclick="@SignOut" class="btn btn-primary">
+                    <i class="bi bi-arrow-bar-left"></i>
+                    Sign Out
+                </button>
+            </div>
+            <div class="col-6">
+                <button @onclick="@(() => _navigationManager.NavigateTo("ReportNew"))" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                    New Report
+                </button>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+@code {
+    public List<RoadReport> ListReports = new();
+    public bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UploadReports();
+
+        isLoading = false;
+    }
+
+    private async Task UploadReports()
+    {
+        var db = await _dbFactory.Create<Roadside>();
+        ListReports = db.RoadReports.OrderBy(d => d.ReportDate).ToList();
+
+        try
+        {
+            for(int i=ListReports.Count;i <= 0;i--)
+            {
+                bool result = await _httpService.PostAsyncBool<RoadReport>("Home", ListReports[i]);
+                if (result)
+                {
+                    db.RoadReports.Remove(ListReports[i]);
+                    await db.SaveChanges();
+
+                    ListReports.RemoveAt(i);
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            db.Dispose();
+        }
+    }
+
+    public async Task SignOut()
+    {
+        await _storageService.SetStringAsync("userEmail", "");
+
+        _navigationManager.NavigateTo("/");
+    }
+}
