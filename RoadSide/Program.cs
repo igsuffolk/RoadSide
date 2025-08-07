@@ -7,17 +7,11 @@ using RoadSide;
 using RoadSide.Middleware;
 using RoadSide.Helpers;
 using RoadSide.Services;
-using Serilog;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-
-Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(builder.Configuration)
-       .CreateLogger();
-
-builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RoadSideAuthenticationStateProvider>();

@@ -17,7 +17,6 @@
 @inject NavigationManager _navigationManager
 @inject UserService _userService
 
-
 <PageTitle>New Report</PageTitle>
 
 <div class="container-fluid pb-5">
@@ -174,6 +173,9 @@
         if (firstRender)
         {
             User user = await _userService.FetchUserFromBrowser();
+            if(!user.isAuthenticated)
+                  _navigationManager.NavigateTo("SignIn");
+
             ReportedBy = user.Email;
 
             await LoadReports();
@@ -182,6 +184,9 @@
 
     private async Task UploadReports()
     {
+        IsUploading = true;
+        StateHasChanged();
+
         if (await PingApi())
         {
             using (var db = await _dbFactory.Create<Roadside>())
@@ -204,6 +209,8 @@
               await Toast.Show("danger","You appear to be offline. Please try later.",3000);
         }
       
+        IsUploading = false;
+        StateHasChanged();
     }
 
     private async Task LoadReports()
@@ -245,6 +252,8 @@
             await Toast.Show("danger","Please enter a description",3000);
             return; 
         }
+
+        Model.ReportedBy = ReportedBy;
 
         IsSending= true;
         StateHasChanged();

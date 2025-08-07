@@ -9,6 +9,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedProject1", "..\Shared
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "..\Api\Api.csproj", "{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "..\ClassLibrary1\ClassLibrary1.csproj", "{2E2A821C-0E53-442C-A550-7034790F4381}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2D16998-C8FC-47F0-9B5E-F5C9DAEF593E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E2A821C-0E53-442C-A550-7034790F4381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E2A821C-0E53-442C-A550-7034790F4381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E2A821C-0E53-442C-A550-7034790F4381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E2A821C-0E53-442C-A550-7034790F4381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -31,7 +37,7 @@ Global
 		SolutionGuid = {1AE6C912-264C-4044-8660-019C306E6707}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\SharedProject1\SharedProject1.projitems*{a2d16998-c8fc-47f0-9b5e-f5c9daef593e}*SharedItemsImports = 5
+		..\SharedProject1\SharedProject1.projitems*{2e2a821c-0e53-442c-a550-7034790f4381}*SharedItemsImports = 5
 		..\SharedProject1\SharedProject1.projitems*{efe85afc-ebc1-4067-93fb-157905fc923c}*SharedItemsImports = 5
 		..\SharedProject1\SharedProject1.projitems*{f1394bb6-60ea-4e74-8191-abb0500a1a75}*SharedItemsImports = 13
 	EndGlobalSection

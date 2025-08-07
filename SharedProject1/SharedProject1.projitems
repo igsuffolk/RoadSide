@@ -9,7 +9,11 @@
     <Import_RootNamespace>SharedProject1</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\IdentityResultDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\LoginDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\LoginModelDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\RegisterDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\ResetPasswordDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Email\EmailConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Email\EmailMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RoadReport.cs" />

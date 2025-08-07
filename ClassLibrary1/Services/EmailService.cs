@@ -1,18 +1,16 @@
-﻿using SharedProject1.Models;
+﻿using SharedProject1.Models.Email;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Utils;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using ClassLibrary1.Interfaces;
 
-namespace Api.Services
+namespace ClassLibrary1.Services
 {
-    public interface IEmailService
-    {
-        Task<EmailMessage> SendEmailAsync(EmailMessage message);
-    }
-
     public class EmailService : IEmailService
     {
         private readonly EmailConfiguration _emailConfig;
@@ -28,7 +26,7 @@ namespace Api.Services
                .GetSection("EmailConfig")
                .Get<EmailConfiguration>();
         }
-        public async Task<EmailMessage> SendEmailAsync(EmailMessage message)
+        public async Task<bool> SendEmailAsync(EmailMessage message)
         {
             message.From = _emailConfig.From;
 
@@ -54,7 +52,7 @@ namespace Api.Services
                 emailMessage.Subject = message.Subject;
 
                 BodyBuilder bodyBuilder = new();
-                string templateFile = System.IO.File.ReadAllText(Path.Combine(_webHostEnvironment.WebRootPath, "templates", "email.html"));
+               // string templateFile = System.IO.File.ReadAllText(Path.Combine(_webHostEnvironment.WebRootPath, "templates", "email.html"));
 
                 //Add Attachments
                 if (message.Attachments?.Count > 0)
@@ -67,20 +65,20 @@ namespace Api.Services
                     }
                 }
 
-                //Add Embedded Resources eg Images
-                if (message.EmbeddedResourcesElementPaths != null && message.EmbeddedResourcesElementPaths.Any())
-                {
-                    foreach (KeyValuePair<string, string> elementPath in message.EmbeddedResourcesElementPaths)
-                    {
-                        templateFile = templateFile.Replace(elementPath.Key, elementPath.Value);
-                    }
-                }
+                ////Add Embedded Resources eg Images
+                //if (message.EmbeddedResourcesElementPaths != null && message.EmbeddedResourcesElementPaths.Any())
+                //{
+                //    foreach (KeyValuePair<string, string> elementPath in message.EmbeddedResourcesElementPaths)
+                //    {
+                //        templateFile = templateFile.Replace(elementPath.Key, elementPath.Value);
+                //    }
+                //}
 
                 var mi = bodyBuilder.LinkedResources.Add(Path.Combine(_webHostEnvironment.WebRootPath, "images", "roadside_80.png"));
                 mi.ContentId = MimeUtils.GenerateMessageId();
-                templateFile = templateFile.Replace("<#LogoImage#>", "<img src='cid:" + mi.ContentId + "'>");
+                message.Content = message.Content.Replace("<#LogoImage#>", "<img src='cid:" + mi.ContentId + "'>");
 
-                bodyBuilder.HtmlBody = templateFile;
+                bodyBuilder.HtmlBody = message.Content;
 
                 emailMessage.Body = bodyBuilder.ToMessageBody();
             }
@@ -90,7 +88,8 @@ namespace Api.Services
             }
             return emailMessage;
         }
-        private async Task<EmailMessage> SendAsync(MimeMessage mailMessage)
+
+        private async Task<bool> SendAsync(MimeMessage mailMessage)
         {
             bool sentOk = false;
             using (var client = new SmtpClient())
@@ -121,11 +120,10 @@ namespace Api.Services
                     client.Dispose();
                 }
             }
-            EmailMessage emailMessage = new EmailMessage
-            {
-                Success = sentOk
-            };
-            return emailMessage;
+
+           
+
+            return sentOk;
         }
 
         static bool MySslCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

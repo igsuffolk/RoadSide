@@ -8,8 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.18" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
-    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
@@ -21,9 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\lib\" />
     <Folder Include="wwwroot\temp\" />
   </ItemGroup>
 
-  <Import Project="..\SharedProject1\SharedProject1.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj" />
+  </ItemGroup>
 
 </Project>

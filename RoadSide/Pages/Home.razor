@@ -1,43 +1,32 @@
 ﻿@page "/"
 @layout HomeLayout
+
 @using RoadSide.Helpers
-@using Microsoft.AspNetCore.Http
-@using SharedProject1.Models.DTO
-@using RoadSide.Services
 @using RoadSide.Models
-@using BlazorBootstrapToasts
 
-@inject NavigationManager _navigationManager
-@inject IHttpService _httpService
 @inject UserService _userService
+@inject NavigationManager _navigationManager
 
-<PageTitle>Sign In</PageTitle>
+<PageTitle>Home</PageTitle>
 
 <div class="container-fluid">
     <div class="card shadow-sm mt-5">
-        <div class="card-body">
-            <div class="card-title">
-                <h2>Sign In</h2>
+        <div class="row ">
+            <div class="col-4 ">
+                <img src="/images/roadside_80.png" class="img-fluid rounded-start" alt="...">
             </div>
-            <Toast @ref="Toast"></Toast>
-             <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
-            <label class="form-label">Email</label>
-            <InputText class="form-control" @bind-Value="Model.Email" />
-
-            <label class="form-label">Password</label>
-            <InputText type="password" class="form-control" @bind-Value="Model.Password" />
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-box-arrow-right"></i>&nbsp;Sign In</button>
+            <div class="col-8 ">
+                <div class="card-body">
+                    <h5 class="card-title">Welcome to RoadSide</h5>
+                    <button type="button" @onclick="SignIn" class="btn btn-primary mt-3" style="width:80%"><i class="bi bi-box-arrow-right"></i>&nbsp;Sign In</button><br />
+                    <button type="button" @onclick="Register" class="btn btn-primary mt-3" style="width:80%"><i class="bi bi-box-arrow-right"></i>&nbsp;Register</button>
+                </div>
             </div>
-            </EditForm>
         </div>
     </div>
-
 </div>
 
 @code {
-    public LoginDTO Model = new();
-    public Toast Toast { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -50,26 +39,13 @@
             }
         }
     }
-
-    private async Task Submit()
+    private async Task SignIn()
     {
-        if (string.IsNullOrEmpty(Model.Email))
-        {
-            await Toast.Show("danger", "Please enter an Email", 3000);
-            return;
-        }
-
-        string result = await _httpService.PostAsyncString<LoginDTO>("home/login", Model);
-        if (string.IsNullOrEmpty(result))
-        {
-            await Toast.Show("danger", "Invalid Credentials", 3000);
-            return;
-        }
-
-       await _userService.AuthenticateUserAsync(result);
-
-
-        _navigationManager.NavigateTo("Report");
+        _navigationManager.NavigateTo("SignIn");
     }
 
+    private async Task Register()
+    {
+        _navigationManager.NavigateTo("Register");
+    }
 }

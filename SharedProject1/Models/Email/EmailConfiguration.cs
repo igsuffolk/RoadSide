@@ -1,4 +1,4 @@
-﻿namespace SharedProject1.Models;
+﻿namespace SharedProject1.Models.Email;
 public class EmailConfiguration
 {
     public string To { get; set; }

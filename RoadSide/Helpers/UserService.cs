@@ -3,6 +3,7 @@ using RoadSide.Models;
 using RoadSide.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Transactions;
 using static RoadSide.Middleware.HttpTokenHandler;
 
 namespace RoadSide.Helpers
@@ -68,8 +69,7 @@ namespace RoadSide.Helpers
             User user = new()
             {
                 Email = principal.FindFirst(ClaimTypes.Email)?.Value ?? "",
-                Password = principal.FindFirst(ClaimTypes.Hash)?.Value ?? "",
-
+                Password = principal.FindFirst(ClaimTypes.Hash)?.Value ?? ""
             };
            
             return user;

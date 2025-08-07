@@ -11,6 +11,7 @@ namespace RoadSide.Services
     public interface IHttpService
     {
         Task<T> GetAsync<T>(string uri);
+        Task GetAsyncVoid(string uri);
         Task<T> PostAsync<T>(string uri, T obj);
         Task<bool> PostAsyncBool<T>(string uri, T obj);
         Task<string> PostAsyncString<T>(string uri, T obj);
@@ -49,7 +50,18 @@ namespace RoadSide.Services
 
             return response;
         }
+        public async Task GetAsyncVoid(string uri)
+        {
+            HttpClient httpClient = _httpClientFactory.CreateClient("Api");
 
+            HttpResponseMessage httpResponse = await httpClient.GetAsync(uri);
+
+            if (httpResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new HttpIOException(HttpRequestError.ConnectionError, uri);
+            }
+
+        }
         public async Task<T> PostAsync<T>(string uri, T obj)
         {
             HttpClient httpClient = _httpClientFactory.CreateClient("Api");
@@ -58,7 +70,7 @@ namespace RoadSide.Services
 
             if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
-                return default(T);
+                throw new HttpIOException(HttpRequestError.ConnectionError, uri);
             }
 
             string result = await httpResponse.Content.ReadAsStringAsync();
@@ -74,7 +86,7 @@ namespace RoadSide.Services
 
             if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
-                return false;
+                throw new HttpIOException(HttpRequestError.ConnectionError, uri);
             }
 
             string result = await httpResponse.Content.ReadAsStringAsync();
@@ -90,7 +102,7 @@ namespace RoadSide.Services
 
             if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
-                return "";
+                throw new HttpIOException(HttpRequestError.ConnectionError, uri);
             }
 
             string result = await httpResponse.Content.ReadAsStringAsync();

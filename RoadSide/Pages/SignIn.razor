@@ -1,0 +1,112 @@
+﻿@page "/SignIn"
+@layout HomeLayout
+
+@using RoadSide.Helpers
+@using SharedProject1.Models.DTO
+@using BlazorBootstrapToasts
+@using RoadSide.Services
+@using RoadSide.Models
+@using BlazorBootstrapToasts
+
+@inject NavigationManager _navigationManager
+@inject IHttpService _httpService
+@inject UserService _userService
+
+<PageTitle>Sign In</PageTitle>
+
+<div class="container-fluid">
+    <div class="card shadow-sm mt-5">
+        <div class="card-body">
+            <div class="card-title">
+                <h2>Sign In</h2>
+            </div>
+            <Toast @ref="Toast"></Toast>
+            <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
+                <label class="form-label">Email</label>
+                <InputText class="form-control" @bind-Value="Model.Email" />
+
+                <label class="form-label">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="Model.Password" />
+
+                <div class="text-center mt-3">
+                    <button type="button" @onclick="@GoBack" class="btn btn-secondary"><i class="bi bi-box-arrow-left"></i>&nbsp;Back</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-right"></i>&nbsp;Sign In</button>
+                </div>
+               
+                <div class="text-center mt-5">
+                    <button type="button" @onclick="@ForgotPassword" class="btn btn-secondary btn-sm" style="width:60%"><i class="bi bi-question-lg"></i>&nbsp;Forgot Password</button><br/>
+                    <button type="button" @onclick="@ResendConfirmation" class="btn btn-secondary btn-sm mt-2" style="width:60%"><i class="bi bi-check-lg"></i>&nbsp;Resend Confirmation Email</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+    public LoginModelDTO Model = new();
+    public Toast Toast { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            User? user = await _userService.FetchUserFromBrowser();
+            if (user.isAuthenticated)
+            {
+                _navigationManager.NavigateTo("Report");
+            }
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrEmpty(Model.Email))
+        {
+            await Toast.Show("danger", "Please enter an Email", 3000);
+            return;
+        }
+
+        LoginModelDTO result = await _httpService.PostAsync<LoginModelDTO>("Identity/login", Model);
+        if (result.LoginFailed)
+        {
+            await Toast.Show("danger", "Invalid Credentials", 3000);
+            return;
+        }
+
+        await _userService.AuthenticateUserAsync(result.Token);
+
+        _navigationManager.NavigateTo("Report");
+    }
+
+    private async Task ForgotPassword()
+    {
+        if (string.IsNullOrEmpty(Model.Email))
+        {
+            await Toast.Show("danger", "Please enter an Email", 3000);
+            return;
+        }
+
+        await _httpService.GetAsyncVoid($"Identity/ForgotPassword/{Model.Email}");
+
+        await Toast.Show("success", "If the email address is found, a reset email will been sent", 3000);
+    }
+
+    private async Task ResendConfirmation()
+    {
+        if (string.IsNullOrEmpty(Model.Email))
+        {
+            await Toast.Show("danger", "Please enter an Email", 3000);
+            return;
+        }
+
+        await _httpService.GetAsyncVoid($"Identity/ResendConfirmation/{Model.Email}");
+
+        await Toast.Show("success", "If the email address is found, a confirmation email will been sent", 3000);
+    }
+    private async Task GoBack()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+}
