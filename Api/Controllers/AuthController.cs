@@ -32,9 +32,7 @@ namespace Api.Controllers
                 return BadRequest("Missing Authorization header");
             }
 
-            string authHeader = Request.Headers["Authorization"].ToString();
-            authHeader = authHeader.Substring("Basic ".Length).Trim();
-            string result = await _authService.GenerateToken(authHeader);
+            string result = await _authService.GenerateToken(Request.Headers["Authorization"].ToString());
 
             if (result == null)
                 return BadRequest();

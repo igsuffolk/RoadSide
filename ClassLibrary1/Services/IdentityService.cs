@@ -55,7 +55,7 @@ namespace ClassLibrary1.Services
             IdentityUser? appUser = await _userManager.FindByEmailAsync(model.Email);
             if (appUser == null)
             {
-                appUser = await _userManager.FindByNameAsync(model.UserName);
+                appUser = await _userManager.FindByNameAsync(model.Email);
             }
 
             if (appUser == null)

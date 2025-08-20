@@ -19,6 +19,13 @@ namespace ClassLibrary1.Extensions
                 //options.EnableDetailedErrors();
             });
 
+            service.AddDbContext<ReportDbContext>(options =>
+            {
+                options.UseMySQL(configuration.GetConnectionString("MySql"));
+                options.EnableSensitiveDataLogging();
+                //options.EnableDetailedErrors();
+            });
+
             service.AddIdentity<IdentityUser,IdentityRole>(options =>
             {
                 options.Lockout.AllowedForNewUsers = false;

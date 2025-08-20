@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DTO\ResetPasswordDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Email\EmailConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Email\EmailMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\RoadReportDTOcs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\RoadReport.cs" />
   </ItemGroup>
 </Project>

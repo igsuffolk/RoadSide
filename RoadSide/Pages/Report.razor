@@ -74,7 +74,7 @@
                     <h4><i class="bi bi-geo-alt"></i>&nbsp;Location</h4>
                 </div>
                 <label class="form-label">Road Name</label>
-                <InputText class="form-control" @bind-Value="Model.RoadName" />
+                <InputText class="form-control" @bind-Value="Model.RoadName" maxlength="500" />
                  <div class="text-center">
                     <button type="button" class="btn btn-primary mt-2" @onclick="@GetCoords">
                          @{
@@ -108,7 +108,7 @@
                     <h4><i class="bi bi-exclamation-triangle"></i>&nbsp;Issue Details</h4>
                 </div>
                 <label class="form-label">Description</label>
-                <InputTextArea class="form-control" @bind-Value="Model.Description" maxlength="500" rows="4" />
+                <InputTextArea class="form-control" @bind-Value="Model.Description" maxlength="2000" rows="4" />
                  <div class="text-center">
                     <button type="submit" class="btn btn-primary mt-2">
                         @{
@@ -158,8 +158,8 @@
 </div>
 
 @code {
-    public RoadReport Model = new();
-    public List<RoadReport> ListReports = new();
+    public RoadReportDTO Model = new();
+    public List<RoadReportDTO> ListReports = new();
     public string ImageDataUrl = string.Empty;
     public Toast Toast { get; set; }
     public string ReportedBy = string.Empty;
@@ -191,9 +191,9 @@
         {
             using (var db = await _dbFactory.Create<Roadside>())
             {
-                foreach (RoadReport report in ListReports)
+                foreach (RoadReportDTO report in ListReports)
                 {
-                    bool result = await _httpService.PostAsyncBool<RoadReport>("Home", report);
+                    bool result = await _httpService.PostAsyncBool<RoadReportDTO>("Home", report);
                     if (result)
                     {
                         db.RoadReports.Remove(report);
@@ -263,7 +263,7 @@
              bool result = false;
               try
             {
-                result = await _httpService.PostAsyncBool<RoadReport>("Home", Model);
+                result = await _httpService.PostAsyncBool<RoadReportDTO>("Home", Model);
             }
             catch (Exception ex)
             {

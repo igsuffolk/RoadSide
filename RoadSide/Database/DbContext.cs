@@ -12,7 +12,7 @@ namespace RoadSide.Database
         #endregion
 
         #region properties
-        public IndexedSet<RoadReport> RoadReports { get; set; }
+        public IndexedSet<RoadReportDTO> RoadReports { get; set; }
         #endregion
 
       

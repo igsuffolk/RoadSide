@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\" />
+    <Folder Include="wwwroot\ReportPhotos\" />
     <Folder Include="wwwroot\temp\" />
   </ItemGroup>
 

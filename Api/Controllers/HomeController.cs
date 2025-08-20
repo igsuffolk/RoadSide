@@ -19,7 +19,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewReport(RoadReport model)
+        public async Task<IActionResult> NewReport(RoadReportDTO model)
         {
             try
             {

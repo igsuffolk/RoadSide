@@ -21,6 +21,7 @@ namespace ClassLibrary1.Services
         }
         public async Task<string> GenerateToken(string authHeader)
         {
+            authHeader = authHeader.Substring("Basic ".Length).Trim();
             string credentialstring;
             string[] credentials;
 
