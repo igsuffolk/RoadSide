@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.JsonWebTokens;
 using RoadSide.Services;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -62,12 +63,11 @@ public class HttpTokenHandler(IConfiguration configuration, IMemoryCache memoryC
 
             cacheValue = token;
 
-            var jwtToken = new JsonWebToken(token);
-            var tokenExp = jwtToken.Claims.First(claim => claim.Type.Equals("exp")).Value;
-            //TimeSpan ts = DdattokenExp - DateTime.Now;
+            var jwtToken = new JwtSecurityToken(token);
+            TimeSpan ts = jwtToken.ValidTo - DateTime.UtcNow;
 
             var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(DateTimeOffset.FromUnixTimeSeconds(long.Parse(tokenExp)));
+                .SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(ts.Minutes));
 
             _memoryCache.Set("ApiToken", cacheValue, cacheEntryOptions);
         }
