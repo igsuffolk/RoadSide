@@ -1,22 +1,16 @@
-﻿using Microsoft.JSInterop;
-using RoadSide.Models;
+﻿using RoadSide.Models;
 using RoadSide.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Transactions;
-using static RoadSide.Middleware.HttpTokenHandler;
 
 namespace RoadSide.Helpers
 {
     public class UserService
-    {
-        private readonly HttpClient _httpClient;
-        private readonly IJSRuntime _jsRuntime;
+    {       
         private readonly IStorageService _storageService;
-        public UserService(HttpClient httpClient, IJSRuntime jsRuntime, IStorageService storageService)
+        public UserService(IStorageService storageService)
         {
-            _httpClient = httpClient;
-            _jsRuntime = jsRuntime;
+           
             _storageService = storageService;
         }
         public async Task<User?> AuthenticateUserAsync(string token)

@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace RoadSide.Helpers
 {
-    public class RoadSideAuthenticationStateProvider : AuthenticationStateProvider
+    public class RoadSideAuthenticationStateProvider: AuthenticationStateProvider
     {
         private readonly UserService _userService;
 
@@ -17,31 +17,31 @@ namespace RoadSide.Helpers
             var principal = new ClaimsPrincipal();
             var user = _userService.FetchUserFromBrowser();
 
-            //if (user is not null)
-            //{
-            //    var authenticatedUser = await _userService.AuthenticateUserAsync(token);
+            ///if (user is not null)
+            ///{
+            ///    var authenticatedUser = await _userService.AuthenticateUserAsync(token);
 
-            //    if (authenticatedUser is not null)
-            //    {
-            //        principal = authenticatedUser.ToClaimsPrincipal();
-            //    }
-            //}
+            ///    if (authenticatedUser is not null)
+            ///    {
+            ///        principal = authenticatedUser.ToClaimsPrincipal();
+            ///    }
+            ///}
 
             return new(principal);
         }
 
-        //public async Task LoginAsync(string token)
-        //{
-        //    var principal = new ClaimsPrincipal();
-        //    var user = await _userService.AuthenticateUserAsync(token);
+        ///public async Task LoginAsync(string token)
+        ///{
+        ///    var principal = new ClaimsPrincipal();
+        ///    var user = await _userService.AuthenticateUserAsync(token);
 
-        //    if (user is not null)
-        //    {
-        //        principal = user.ToClaimsPrincipal();
-        //    }
+        ///    if (user is not null)
+        ///    {
+        ///        principal = user.ToClaimsPrincipal();
+        ///    }
 
-        //    NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
-        //}
+        ///    NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
+        ///}
 
         public void Logout()
         {
