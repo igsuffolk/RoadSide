@@ -6,11 +6,12 @@
 @using BlazorBootstrapToasts
 @using RoadSide.Services
 @using RoadSide.Models
-@using BlazorBootstrapToasts
 
 @inject NavigationManager _navigationManager
 @inject IHttpService _httpService
-@inject UserService _userService
+@inject RoadSideAuthenticationStateProvider _roadSideAuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [AllowAnonymous]
 
 <PageTitle>Sign In</PageTitle>
 
@@ -52,11 +53,7 @@
     {
         if (firstRender)
         {
-            User? user = await _userService.FetchUserFromBrowser();
-            if (user.isAuthenticated)
-            {
-                _navigationManager.NavigateTo("Report");
-            }
+          
         }
     }
 
@@ -74,8 +71,8 @@
             await Toast.Show("danger", "Invalid Credentials", 3000);
             return;
         }
-
-        await _userService.AuthenticateUserAsync(result.Token);
+        await _roadSideAuthenticationStateProvider.LoginAsync(result.Token);
+       
 
         _navigationManager.NavigateTo("Report");
     }

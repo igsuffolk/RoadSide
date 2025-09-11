@@ -8,14 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\RoadSideAuthenticationStateProvider2.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Pages\ReportsList.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BlazorBootstrapToasts" Version="1.0.3" />
     <PackageReference Include="IndexedDB.Blazor" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.18" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.7" />

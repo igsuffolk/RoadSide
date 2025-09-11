@@ -14,7 +14,7 @@
 @inject IHttpServicePing _httpServicePing
 @inject IJSRuntime _jsRuntime
 @inject NavigationManager _navigationManager
-@inject UserService _userService
+@inject RoadSideAuthenticationStateProvider _roadSideAuthenticationStateProvider
 
 <PageTitle>New Report</PageTitle>
 
@@ -23,7 +23,7 @@
     <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
        <Toast @ref="Toast"></Toast>
         <div class="text-center">
-        <h3>Report Road Issue</h3>
+            <h3>Report Road Issue</h3>
         </div>
         <p>Use this form to submit details of Road Issues to your local council.</p>
         <div class="card shadow-sm  mt-2">
@@ -171,11 +171,7 @@
     {
         if (firstRender)
         {
-            User user = await _userService.FetchUserFromBrowser();
-            if(!user.isAuthenticated)
-                  _navigationManager.NavigateTo("SignIn");
-
-            ReportedBy = user.Email;
+                     ReportedBy = _roadSideAuthenticationStateProvider.Username;
 
             await LoadReports();
         }
