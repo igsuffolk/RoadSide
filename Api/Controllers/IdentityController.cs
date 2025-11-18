@@ -1,7 +1,7 @@
-﻿using ClassLibrary1.Interfaces;
+﻿using ApiClassLibrary.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedProject1.Models.DTO;
+using SharedProject.Models.DTO;
 
 namespace Api.Controllers
 {
@@ -20,7 +20,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginModelDTO model)
+        public async Task<IActionResult> Login(LoginDTO model)
         {
             try
             {

@@ -3,9 +3,9 @@
 
 <PageTitle>Register</PageTitle>
 
-@using SharedProject1.Models.DTO
+@using SharedProject.Models.DTO
 @using BlazorBootstrapToasts
-@using RoadSide.Services
+@using RoadSide.Interfaces
 @using System.Text.Json;
 
 @inject NavigationManager _navigationManager
@@ -13,14 +13,27 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @attribute [AllowAnonymous]
 
+@* 
+  Register.razor
+  - Simple registration page that posts a RegisterDTO to the Identity/Register endpoint.
+  - Shows toast notifications for success and error conditions.
+  - Uses injected services:
+      _httpService        - HTTP helper for posting the DTO
+      _navigationManager  - used to navigate after success or to go back
+  - Marked [AllowAnonymous] so unauthenticated visitors may access this page.
+*@
+
 <div class="container-fluid">
     <div class="card shadow-sm mt-5">
         <div class="card-body">
             <div class="card-title">
                 <h2>Register</h2>
             </div>
+
+            @* Toast component reference used to display transient messages to the user *@
             <Toast @ref="Toast"></Toast>
 
+            @* The EditForm binds to Model and invokes Submit when the form is submitted *@
             <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
                 <label class="form-label">Email</label>
                 <InputText class="form-control" @bind-Value="Model.Email" type="email" />
@@ -32,6 +45,7 @@
                 <InputText type="password" class="form-control" @bind-Value="Model.Password" />
 
                <div class="text-center mt-3">
+                    @* Back navigates to home; Submit triggers registration POST *@
                     <button type="button" @onclick="@GoBack" class="btn btn-secondary"><i class="bi bi-box-arrow-left"></i>&nbsp;Back</button>
                     <button type="Submit" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;Submit</button>
                 </div>
@@ -43,29 +57,53 @@
 </div>
 
 @code {
+    // DTO bound to the form. Populated by two-way binding on the InputText components.
     public RegisterDTO Model = new();
-    public Toast Toast { get; set; }
 
+    // Reference to the Toast component for showing success/error messages.
+    public Toast Toast { get; set; } = new();
+
+    /// <summary>
+    /// Handles form submission.
+    /// - Posts Model to "Identity/Register".
+    /// - Deserializes IdentityResultDTO to determine success or display errors.
+    /// - Shows toasts for errors and on success navigates to the home page.
+    /// </summary>
     private async Task Submit()
     {
+        // Post the registration DTO and get the server response as a JSON string.
         string result = await _httpService.PostAsyncString<RegisterDTO>("Identity/Register", Model);
 
-        IdentityResultDTO identityResultDTO = JsonSerializer.Deserialize<IdentityResultDTO>(result);
+        // Deserialize the result to the expected IdentityResultDTO shape.
+        IdentityResultDTO? identityResultDTO = JsonSerializer.Deserialize<IdentityResultDTO>(result);
+
+        // If the response cannot be parsed, inform the user.
+        if(identityResultDTO == null)
+        {
+            await Toast.Show("danger", "An unexpected error occurred. Please try again later.", 3000);
+            return;
+        };
+
+        // If registration failed show each error returned from the API as a danger toast.
         if (!identityResultDTO.Succeeded)
         {
             foreach (var error in identityResultDTO.Errors)
                 await Toast.Show("danger", "Error " + error, 3000);
-
         }
         else
         {
+            // On success notify the user and redirect to home (login or landing page).
             await Toast.Show("success", "Thank you. A confirmation email has been sent.", 3000);
 
             _navigationManager.NavigateTo("/");
         }  
     }
 
-    private async Task GoBack()
+    /// <summary>
+    /// Navigate back to the application's home page.
+    /// Kept as a separate method for testability and reuse.
+    /// </summary>
+    private void GoBack()
     {
         _navigationManager.NavigateTo("/");
     }

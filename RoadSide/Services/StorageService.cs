@@ -1,16 +1,12 @@
 ﻿using Microsoft.JSInterop;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using RoadSide.Interfaces;
 
 
 namespace RoadSide.Services
 {
-    public interface IStorageService
-    {
-        Task<string> GetStringAsync(string key);
-        Task SetStringAsync(string value, string key);
-    }
-
+    
     public class StorageService(IJSRuntime jsRuntime) : IStorageService
     {
         private readonly IJSRuntime _jsRuntime = jsRuntime;

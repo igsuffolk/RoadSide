@@ -2,9 +2,9 @@
 @layout HomeLayout
 
 @using RoadSide.Helpers
-@using SharedProject1.Models.DTO
+@using SharedProject.Models.DTO
 @using BlazorBootstrapToasts
-@using RoadSide.Services
+@using RoadSide.Interfaces
 @using RoadSide.Models
 
 @inject NavigationManager _navigationManager
@@ -46,18 +46,10 @@
 
 @code {
 
-    public LoginModelDTO Model = new();
+    public LoginDTO Model = new();
     public Toast Toast { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-          
-        }
-    }
-
-    private async Task Submit()
+      private async Task Submit()
     {
         if (string.IsNullOrEmpty(Model.Email))
         {
@@ -65,7 +57,7 @@
             return;
         }
 
-        LoginModelDTO result = await _httpService.PostAsync<LoginModelDTO>("Identity/login", Model);
+        LoginDTO result = await _httpService.PostAsync<LoginDTO>("Identity/login", Model);
         if (result.LoginFailed)
         {
             await Toast.Show("danger", "Invalid Credentials", 3000);
@@ -102,7 +94,7 @@
 
         await Toast.Show("success", "If the email address is found, a confirmation email will been sent", 3000);
     }
-    private async Task GoBack()
+    private void GoBack()
     {
         _navigationManager.NavigateTo("/");
     }

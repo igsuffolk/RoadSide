@@ -1,9 +1,9 @@
 ﻿@page "/Report"
 
-@using SharedProject1.Models
+@using SharedProject.Models
 @using RoadSide.Database
 @using IndexedDB.Blazor
-@using RoadSide.Services
+@using RoadSide.Interfaces
 @using System.Text.Json
 @using BlazorBootstrapToasts
 @using RoadSide.Helpers
@@ -16,16 +16,34 @@
 @inject NavigationManager _navigationManager
 @inject RoadSideAuthenticationStateProvider _roadSideAuthenticationStateProvider
 
+@* 
+  Report.razor
+  - UI for creating and submitting a roadside report.
+  - Supports taking/choosing a photo, geolocation via JS interop, offline storage (IndexedDB),
+    and online submission to the API.
+  - Uses injected services:
+      _dbFactory            - IndexedDB access for offline reports
+      _httpService          - HTTP helper to post reports
+      _httpServicePing      - Lightweight ping to detect online status
+      _jsRuntime            - JS interop for GPS coordinates
+      _navigationManager    - navigation helper
+      _roadSideAuthenticationStateProvider - to get current username
+*@
+
 <PageTitle>New Report</PageTitle>
 
 <div class="container-fluid pb-5">
 
+    @* Main form bound to Model; Submit is invoked on form submit *@
     <EditForm Model="@Model" OnSubmit="Submit" FormName="form1">
-       <Toast @ref="Toast"></Toast>
+        @* Toast component used for user feedback (success/error notifications) *@
+        <Toast @ref="Toast"></Toast>
         <div class="text-center">
             <h3>Report Road Issue</h3>
         </div>
         <p>Use this form to submit details of Road Issues to your local council.</p>
+
+        @* Date card *@
         <div class="card shadow-sm  mt-2">
             <div class="card-body">
                 <div class="card-title">
@@ -35,38 +53,41 @@
             </div>
         </div>
 
+        @* Photo card: shows preview if available and allows file selection *@
         <div class="card shadow-sm  mt-2">
             <div class="card-body">
                 <div class="card-title">
                     <h4><i class="bi bi-camera"></i>&nbsp;Photo</h4>
                 </div>
-                    <div class="text-center">
+                <div class="text-center">
+                    @{
+                        if (!string.IsNullOrEmpty(ImageDataUrl))
+                        {
+                            <img src="@ImageDataUrl" width="100" />
+                            <br />
+                        }
+                    }
+                    <label for="photo" class="btn btn-primary mt-2">
                         @{
-                            if (!string.IsNullOrEmpty(ImageDataUrl))
+                            if (IsPhotoLoading)
                             {
-                                <img src="@ImageDataUrl" width="100" />
-                
-                                <br />
+                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-upload"></i>
                             }
                         }
-                        <label for="photo" class="btn btn-primary mt-2">
-                            @{
-                                if (IsPhotoLoading)
-                                {
-                                     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                }
-                                else
-                                {
-                                     <i class="bi bi-upload"></i>
-                                }
-                            }
-                           &nbsp;Select Photo</label>
+                        &nbsp;Select Photo
+                    </label>
                 </div>
+                @* Hidden InputFile element wired to LoadFile handler *@
                 <InputFile class="form-control mt-2" id="photo" style="display:none;" OnChange="LoadFile" />
-                
+
             </div>
         </div>
 
+        @* Location card: road name and "Use GPS" button which calls JS to retrieve coordinates *@
         <div class="card shadow-sm  mt-2">
             <div class="card-body">
                 <div class="card-title">
@@ -74,33 +95,35 @@
                 </div>
                 <label class="form-label">Road Name</label>
                 <InputText class="form-control" @bind-Value="Model.RoadName" maxlength="500" />
-                 <div class="text-center">
+                <div class="text-center">
                     <button type="button" class="btn btn-primary mt-2" @onclick="@GetCoords">
-                         @{
+                        @{
                             if (IsGpsLoading)
                             {
-                                 <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                             }
                             else
                             {
                                 <i class="bi bi-pin-map"></i>
                             }
-                            }
-                            &nbsp;Use GPS</button>
-                
-                            @{
-                            if (Model.Latitude != 0)
-                            {
-                                <div class="divGps mt-2">
-                                    <label><i class="bi bi-check-lg"></i>&nbsp;GPS: @Model.Latitude , @Model.Longitude</label>
-                                </div>
-                            }
-
                         }
-                 </div>
+                        &nbsp;Use GPS
+                    </button>
+
+                    @{
+                        if (Model.Latitude != 0)
+                        {
+                            <div class="divGps mt-2">
+                                <label><i class="bi bi-check-lg"></i>&nbsp;GPS: @Model.Latitude , @Model.Longitude</label>
+                            </div>
+                        }
+
+                    }
+                </div>
             </div>
         </div>
 
+        @* Issue details and submit button *@
         <div class="card shadow-sm  mt-2">
             <div class="card-body">
                 <div class="card-title">
@@ -108,7 +131,7 @@
                 </div>
                 <label class="form-label">Description</label>
                 <InputTextArea class="form-control" @bind-Value="Model.Description" maxlength="2000" rows="4" />
-                 <div class="text-center">
+                <div class="text-center">
                     <button type="submit" class="btn btn-primary mt-2">
                         @{
                             if (IsSending)
@@ -122,11 +145,12 @@
 
                         }
                         <span role="status">&nbsp;Submit Fault Report</span>
-                      </button>
-                  </div>
+                    </button>
+                </div>
             </div>
         </div>
 
+        @* Offline-synced reports panel: shown when there are locally saved reports awaiting upload *@
         @{
             if (ListReports.Count > 0)
             {
@@ -135,17 +159,21 @@
                         <div class="card-title">
                             <h4><i class="bi bi-exclamation-triangle"></i>&nbsp;Sync Reports&nbsp;(@ListReports.Count)</h4>
                         </div>
-                         <div class="text-center">
+                        <div class="text-center">
                             <button type="button" class="btn btn-primary mt-2" @onclick="@UploadReports">
-                                @{if(IsUploading){
-                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                @{
+                                    if (IsUploading)
+                                    {
+                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-cloud-arrow-up"></i>
+                                    }
+
                                 }
-                                else
-                                {
-                                    <i class="bi bi-cloud-arrow-up"></i>
-                                }}
                                 <span role="status">&nbsp;Send Reports</span>
-                                </button>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -153,30 +181,50 @@
         }
 
     </EditForm>
-   
+
 </div>
 
 @code {
+    // The DTO bound to the form. Contains report fields and optional photo bytes.
     public RoadReportDTO Model = new();
+
+    // Cached list of locally stored reports (IndexedDB). Shown in Sync Reports panel.
     public List<RoadReportDTO> ListReports = new();
+
+    // Base64 data URL used to preview the selected photo in the UI.
     public string ImageDataUrl = string.Empty;
-    public Toast Toast { get; set; }
+
+    // Reference to the Toast component used to show immediate feedback to the user.
+    public Toast Toast { get; set; } = new();
+
+    // Username of the currently authenticated user (set on first render).
     public string ReportedBy = string.Empty;
+
+    // UI state flags to control spinners and button states.
     public bool IsSending = false;
     public bool IsUploading = false;
     public bool IsPhotoLoading = false;
     public bool IsGpsLoading = false;
 
+    /// <summary>
+    /// Lifecycle hook: runs after first render. Loads saved reports and gets the current username.
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-                     ReportedBy = _roadSideAuthenticationStateProvider.Username;
+            // Get the logged in username from the custom auth provider.
+            ReportedBy = _roadSideAuthenticationStateProvider.Username;
 
+            // Load any locally stored reports to show sync status.
             await LoadReports();
         }
     }
 
+    /// <summary>
+    /// Uploads locally stored reports to the API when online.
+    /// Removes each report from IndexedDB after successful send.
+    /// </summary>
     private async Task UploadReports()
     {
         IsUploading = true;
@@ -191,23 +239,27 @@
                     bool result = await _httpService.PostAsyncBool<RoadReportDTO>("Home", report);
                     if (result)
                     {
+                        // Remove successfully sent report from local store.
                         db.RoadReports.Remove(report);
                         await db.SaveChanges();
                     }
                 }
 
             }
-              await LoadReports();
+            await LoadReports();
         }
         else
         {
-              await Toast.Show("danger","You appear to be offline. Please try later.",3000);
+            await Toast.Show("danger", "You appear to be offline. Please try later.", 3000);
         }
-      
+
         IsUploading = false;
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Loads locally saved reports from IndexedDB into ListReports.
+    /// </summary>
     private async Task LoadReports()
     {
         using (var db = await _dbFactory.Create<Roadside>())
@@ -218,6 +270,10 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Reads the selected image file into Model.Photo and updates the preview image data URL.
+    /// Uses a 10MB max allowed size. Runs on InputFile OnChange.
+    /// </summary>
     private async void LoadFile(InputFileChangeEventArgs e)
     {
         IsPhotoLoading = true;
@@ -228,6 +284,7 @@
         await stream.CopyToAsync(ms);
         Model.Photo = ms.ToArray();
 
+        // Create data URL for preview (small thumbnails).
         ImageDataUrl = $"data:image;base64,{Convert.ToBase64String(Model.Photo)}";
 
         IsPhotoLoading = false;
@@ -235,44 +292,59 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Handles form submission.
+    /// - Validates required fields client-side.
+    /// - Attempts to POST to API if online; otherwise stores the report locally (IndexedDB).
+    /// - Shows user feedback via Toast.
+    /// </summary>
     private async Task Submit()
     {
         if (string.IsNullOrEmpty(Model.RoadName))
         {
-            await Toast.Show("danger","Please enter a Road Name",3000);
-            return; 
+            await Toast.Show("danger", "Please enter a Road Name", 3000);
+            return;
         }
         if (string.IsNullOrEmpty(Model.Description))
         {
-            await Toast.Show("danger","Please enter a description",3000);
-            return; 
+            await Toast.Show("danger", "Please enter a description", 3000);
+            return;
         }
 
         Model.ReportedBy = ReportedBy;
 
-        IsSending= true;
+        IsSending = true;
         StateHasChanged();
 
-        if(await PingApi())
+        if (await PingApi())
         {
-             bool result = false;
-              try
+            bool result = false;
+            try
             {
+                // Send report to API endpoint "Home"
                 result = await _httpService.PostAsyncBool<RoadReportDTO>("Home", Model);
             }
             catch (Exception ex)
             {
+                // Log but keep UX friendly; offline fallback will save locally.
                 result = false;
                 Console.WriteLine(ex.Message + " " + ex.StackTrace);
+                await Toast.Show("danger", "There was an error sending the report.", 3000);
             }
 
             if (result)
-            { 
-                await Toast.Show("success","Thank you. Your report has been submitted.",3000);
+            {
+                await Toast.Show("success", "Thank you. Your report has been submitted.", 3000);
             }
+            else
+            {
+                await Toast.Show("danger", "There was an error sending the report.", 3000);
+            }
+
         }
         else
         {
+            // Offline: save report into IndexedDB for later upload.
             using (var db = await _dbFactory.Create<Roadside>())
             {
                 db.RoadReports.Add(Model);
@@ -280,20 +352,25 @@
                 await db.SaveChanges();
             }
 
-            await Toast.Show("success","Thank you. You are offline. Your report has been saved for later sending.",3000);
+            await Toast.Show("success", "Thank you. You are offline. Your report has been saved for later sending.", 3000);
         }
-      
+
+        // Reset the form for new input but preserve ReportedBy.
         Model = new();
         Model.ReportedBy = ReportedBy;
         ImageDataUrl = string.Empty;
 
         await LoadReports();
 
-        IsSending= false;
+        IsSending = false;
 
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Uses JS interop to request the device's geolocation.
+    /// Expects a JS function "getCoords" that returns an object with { lat, lng }.
+    /// </summary>
     private async Task GetCoords()
     {
         IsGpsLoading = true;
@@ -309,6 +386,9 @@
 
     }
 
+    /// <summary>
+    /// Lightweight check that the API is reachable. Uses injected IHttpServicePing.
+    /// </summary>
     private async Task<bool> PingApi()
     {
         bool result = await _httpServicePing.Ping();
@@ -316,10 +396,17 @@
         return result;
     }
 
-    private async Task GoBack()
+    /// <summary>
+    /// Navigation helper to go back to the reports list page.
+    /// </summary>
+    private void GoBack()
     {
         _navigationManager.NavigateTo("/ReportsList");
     }
+
+    /// <summary>
+    /// Simple DTO used to receive coordinates from JS interop.
+    /// </summary>
     public class Coords
     {
         public double Lat { get; set; }

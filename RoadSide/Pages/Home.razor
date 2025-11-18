@@ -4,10 +4,7 @@
 @using RoadSide.Helpers
 @using RoadSide.Models
 
-@inject UserService _userService
-@inject RoadSideAuthenticationStateProvider _roadSideAuthenticationStateProvider
 @inject NavigationManager _navigationManager
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @attribute [AllowAnonymous]
 
 <PageTitle>Home</PageTitle>
@@ -31,24 +28,12 @@
 
 @code {
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (_roadSideAuthenticationStateProvider.Username != null){
-            // User? user = await _userService.FetchUserFromBrowser();
-            // if (user.isAuthenticated)
-            // {
-                  //  _navigationManager.NavigateTo("Report");
-             }
-        }
-    }
-    private async Task SignIn()
+    private void SignIn()
     {
         _navigationManager.NavigateTo("SignIn");
     }
 
-    private async Task Register()
+    private void Register()
     {
         _navigationManager.NavigateTo("Register");
     }

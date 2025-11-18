@@ -1,10 +1,10 @@
 
-using ClassLibrary1.Interfaces;
-using ClassLibrary1.Services;
+using ApiClassLibrary.Interfaces;
+using ApiClassLibrary.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SharedProject1.Models.DTO;
+using SharedProject.Models.DTO;
 using System.ComponentModel.DataAnnotations;
 
 namespace Api.Pages

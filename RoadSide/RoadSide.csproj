@@ -36,6 +36,6 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-  <Import Project="..\SharedProject1\SharedProject1.projitems" Label="Shared" />
+  <Import Project="..\SharedProject\SharedProject.projitems" Label="Shared" />
 
 </Project>

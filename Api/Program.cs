@@ -1,6 +1,6 @@
 using Api.Extensions;
-using ClassLibrary1.Extensions;
-using ClassLibrary1.Interfaces;
+using ApiClassLibrary.Extensions;
+using ApiClassLibrary.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +50,6 @@ app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 app.UseCors("MyPolicy");
-
 
 app.MapRazorPages();
 app.MapControllers().RequireAuthorization();

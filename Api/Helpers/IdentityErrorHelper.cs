@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SharedProject1.Models.DTO;
+using SharedProject.Models.DTO;
 
 namespace Api.Helpers
 {

@@ -1,7 +1,7 @@
 ﻿
 using IndexedDB.Blazor;
 using Microsoft.JSInterop;
-using SharedProject1.Models;
+using SharedProject.Models;
 
 namespace RoadSide.Database
 {

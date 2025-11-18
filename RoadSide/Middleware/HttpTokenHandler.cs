@@ -44,8 +44,11 @@ public class HttpTokenHandler(IConfiguration configuration, IMemoryCache memoryC
                 response = await base.SendAsync(request, cancellationToken);
             }
         }
-        catch (Exception ex) { }
-
+        catch
+        {
+            // Swallow any exception retrieving claims to avoid breaking the outbound request pipeline.
+            // We intentionally do not fail the request if headers cannot be added.}            
+        }
         return response;
 
     }

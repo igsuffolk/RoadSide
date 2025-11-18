@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj" />
+    <ProjectReference Include="..\ApiClassLibrary\ApiClassLibrary.csproj" />
   </ItemGroup>
 
 </Project>

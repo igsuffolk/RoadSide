@@ -1,7 +1,6 @@
-﻿using ClassLibrary1.Interfaces;
+﻿using ApiClassLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SharedProject1.Models.DTO;
-using SharedProject1.Models;
+using SharedProject.Models;
 
 namespace Api.Controllers
 {

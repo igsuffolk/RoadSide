@@ -1,4 +1,4 @@
-﻿using ClassLibrary1.Interfaces;
+﻿using ApiClassLibrary.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +32,7 @@ namespace Api.Controllers
                 return BadRequest("Missing Authorization header");
             }
 
-            string result = await _authService.GenerateToken(Request.Headers["Authorization"].ToString());
+            string? result = await _authService.GenerateToken(Request.Headers["Authorization"].ToString());
 
             if (result == null)
                 return BadRequest();

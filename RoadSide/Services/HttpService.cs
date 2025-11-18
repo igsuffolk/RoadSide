@@ -1,21 +1,13 @@
 ﻿
+using RoadSide.Interfaces;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RoadSide.Services
 {
-    public interface IHttpService
-    {
-        Task<T> GetAsync<T>(string uri);
-        Task GetAsyncVoid(string uri);
-        Task<T> PostAsync<T>(string uri, T obj);
-        Task<bool> PostAsyncBool<T>(string uri, T obj);
-        Task<string> PostAsyncString<T>(string uri, T obj);
-    }
+    
     public class HttpService : IHttpService
     {
         private JsonSerializerOptions jsonOptions = new()
